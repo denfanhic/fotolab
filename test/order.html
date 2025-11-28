@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Срочный заказ - ФотоЛаб</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0066FF;
+            --primary-dark: #0052CC;
+            --secondary: #00D4FF;
+            --accent: #FF6B35;
+            --light: #F8FAFC;
+            --dark: #1E293B;
+            --gray: #64748B;
+            --success: #10B981;
+            --white: #FFFFFF;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --shadow: 0 10px 25px rgba(0, 102, 255, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 102, 255, 0.2);
+        }
+
+        body {
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .order-container {
+            background: var(--white);
+            border-radius: 25px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .order-header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .order-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .order-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .urgent-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+            }
+        }
+
+        .order-content {
+            padding: 3rem;
+        }
+
+        .progress-container {
+            margin-bottom: 3rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--light);
+            z-index: 1;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 3px;
+            background: var(--gradient);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 3;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            border: 3px solid var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: 700;
+            color: var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: var(--white);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(0, 102, 255, 0.1);
+        }
+
+        .step.completed .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .step-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .step.active .step-text {
+            color: var(--primary);
+        }
+
+        .step.completed .step-text {
+            color: var(--dark);
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-option {
+            background: var(--light);
+            border: 2px solid var(--light);
+            border-radius: 15px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: var(--gradient);
+            transition: height 0.3s ease;
+        }
+
+        .service-option:hover::before {
+            height: 4px;
+        }
+
+        .service-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .service-option.selected {
+            border-color: var(--primary);
+            background: rgba(0, 102, 255, 0.05);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .service-option.selected::before {
+            height: 4px;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-option.selected .service-icon {
+            color: var(--primary);
+        }
+
+        .service-option h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .service-option p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label i {
+            color: var(--primary);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 1rem;
+            border: 2px solid var(--light);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: var(--light);
+            border: 2px solid var(--light);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: rgba(0, 102, 255, 0.05);
+        }
+
+        .option-price {
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .price-summary {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .price-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--primary);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-prev {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-prev:hover {
+            background: #E2E8F0;
+            transform: translateX(-5px);
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-next:hover {
+            background: var(--primary-dark);
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-submit {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-submit:hover {
+            background: #E55A2B;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: var(--white);
+            font-size: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .progress-steps::before,
+            .progress-bar {
+                display: none;
+            }
+            
+            .order-content {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="order-container">
+        <div class="order-header">
+            <div class="order-header-content">
+                <div class="urgent-badge">
+                    <i class="fas fa-bolt"></i>
+                    ФОТО ГОТОВО ЗА 5 МИНУТ!
+                </div>
+                <h1>Онлайн заказ фото</h1>
+                <p>Быстро, удобно, без очередей</p>
+            </div>
+        </div>
+        
+        <div class="order-content">
+            <div class="progress-container">
+                <div class="progress-steps">
+                    <div class="progress-bar" id="progressBar" style="width: 25%;"></div>
+                    <div class="step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <div class="step-text">Услуга</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <div class="step-text">Опции</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <div class="step-text">Контакты</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-circle">4</div>
+                        <div class="step-text">Подтверждение</div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="multiStepForm">
+                <!-- Шаг 1: Выбор услуги -->
+                <div class="form-section active" id="step1">
+                    <h2 class="section-title">Выберите тип услуги</h2>
+                    
+                    <div class="services-grid">
+                        <div class="service-option" data-service="passport">
+                            <div class="service-icon">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <h3>Паспорт РФ</h3>
+                            <p>35×45 мм</p>
+                        </div>
+                        <div class="service-option" data-service="foreign">
+                            <div class="service-icon">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <h3>Загранпаспорт</h3>
+                            <p>Международный</p>
+                        </div>
+                        <div class="service-option" data-service="visa">
+                            <div class="service-icon">
+                                <i class="fas fa-stamp"></i>
+                            </div>
+                            <h3>Виза</h3>
+                            <p>Для посольств</p>
+                        </div>
+                        <div class="service-option" data-service="student">
+                            <div class="service-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3>Студенческий</h3>
+                            <p>Учебные заведения</p>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <div></div>
+                        <button type="button" class="btn btn-next" onclick="nextStep(2)">
+                            Далее <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Шаг 2: Опции заказа -->
+                <div class="form-section" id="step2">
+                    <h2 class="section-title">Настройте параметры</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-clock"></i>
+                                Срочность
+                            </label>
+                            <select class="form-select" id="urgency" onchange="calculatePrice()">
+                                <option value="standard">Стандарт (30 мин) - 0₽</option>
+                                <option value="fast">Срочно (15 мин) +100₽</option>
+                                <option value="urgent">Очень срочно (5 мин) +200₽</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-copy"></i>
+                                Количество
+                            </label>
+                            <input type="number" class="form-input" id="quantity" value="4" min="1" max="20" onchange="calculatePrice()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-magic"></i>
+                                Ретушь
+                            </label>
+                            <select class="form-select" id="retouch" onchange="calculatePrice()">
+                                <option value="none">Без ретуши - 0₽</option>
+                                <option value="light">Легкая +100₽</option>
+                                <option value="pro">Профессиональная +300₽</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tshirt"></i>
+                                Одежда
+                            </label>
+                            <select class="form-select" id="clothing" onchange="calculatePrice()">
+                                <option value="own">Своя одежда - 0₽</option>
+                                <option value="classic">Классика +0₽</option>
+                                <option value="uniform">Форма +200₽</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(1)">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </button>
+                        <button type="button" class="btn btn-next" onclick="nextStep(3)">
+                            Далее <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Шаг 3: Контактные данные -->
+                <div class="form-section" id="step3">
+                    <h2 class="section-title">Контактная информация</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user"></i>
+                                Ваше имя *
+                            </label>
+                            <input type="text" class="form-input" id="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Телефон *
+                            </label>
+                            <input type="tel" class="form-input" id="phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </label>
+                            <input type="email" class="form-input" id="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Филиал *
+                            </label>
+                            <select class="form-select" id="location" required>
+                                <option value="">Выберите филиал</option>
+                                <option value="orehova">Орехова 54</option>
+                                <option value="parizh">Парижской коммуны 30</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-comment"></i>
+                                Комментарий
+                            </label>
+                            <textarea class="form-textarea" id="comments" placeholder="Особые пожелания или требования..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(2)">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </button>
+                        <button type="button" class="btn btn-next" onclick="nextStep(4)">
+                            Подтвердить <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Шаг 4: Подтверждение -->
+                <div class="form-section" id="step4">
+                    <h2 class="section-title">Подтверждение заказа</h2>
+                    
+                    <div class="price-summary">
+                        <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Детали заказа:</h3>
+                        
+                        <div class="price-item">
+                            <span>Услуга:</span>
+                            <span id="summaryService">Паспорт РФ</span>
+                        </div>
+                        <div class="price-item">
+                            <span>Срочность:</span>
+                            <span id="summaryUrgency">Стандарт</span>
+                        </div>
+                        <div class="price-item">
+                            <span>Количество:</span>
+                            <span id="summaryQuantity">4 шт</span>
+                        </div>
+                        <div class="price-item">
+                            <span>Ретушь:</span>
+                            <span id="summaryRetouch">Без ретуши</span>
+                        </div>
+                        <div class="price-item">
+                            <span>Одежда:</span>
+                            <span id="summaryClothing">Своя одежда</span>
+                        </div>
+                        <div class="price-item">
+                            <span>Филиал:</span>
+                            <span id="summaryLocation">Орехова 54</span>
+                        </div>
+                        
+                        <div class="price-total">
+                            <span>ИТОГО:</span>
+                            <span id="summaryTotal">1000₽</span>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(3)">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </button>
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-paper-plane"></i> Отправить заказ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Шаг 5: Успех -->
+                <div class="form-section" id="step5">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2 style="margin-bottom: 1rem; color: var(--success);">Заказ успешно отправлен!</h2>
+                        <p style="margin-bottom: 2rem; color: var(--gray);">Мы свяжемся с вами в течение 5 минут для подтверждения заказа.</p>
+                        <a href="index.html" class="btn btn-next">
+                            <i class="fas fa-home"></i> На главную
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedService = 'passport';
+        const totalSteps = 4;
+
+        // Инициализация выбора услуги
+        document.querySelectorAll('.service-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.service-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                selectedService = this.dataset.service;
+                updateOrderSummary();
+            });
+        });
+
+        // Выбор первой услуги по умолчанию
+        document.querySelector('.service-option').classList.add('selected');
+
+        function nextStep(step) {
+            if (validateStep(currentStep)) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+                
+                currentStep = step;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+                
+                updateProgressBar();
+                updateOrderSummary();
+            }
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+            
+            currentStep = step;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+            
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            // Отмечаем завершенные шаги
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNumber = index + 1;
+                if (stepNumber < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNumber === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    return selectedService !== '';
+                case 3:
+                    const name = document.getElementById('name').value;
+                    const phone = document.getElementById('phone').value;
+                    const location = document.getElementById('location').value;
+                    
+                    if (!name || !phone || !location) {
+                        alert('Пожалуйста, заполните все обязательные поля (отмечены *)');
+                        return false;
+                    }
+                    return true;
+                default:
+                    return true;
+            }
+        }
+
+        function calculatePrice() {
+            let basePrice = 250;
+            let urgencyMultiplier = 0;
+            let retouchPrice = 0;
+            let clothingPrice = 0;
+            const quantity = parseInt(document.getElementById('quantity').value) || 4;
+
+            // Надбавки
+            const urgency = document.getElementById('urgency').value;
+            if (urgency === 'fast') urgencyMultiplier = 100;
+            else if (urgency === 'urgent') urgencyMultiplier = 200;
+
+            const retouch = document.getElementById('retouch').value;
+            if (retouch === 'light') retouchPrice = 100;
+            else if (retouch === 'pro') retouchPrice = 300;
+
+            const clothing = document.getElementById('clothing').value;
+            if (clothing === 'uniform') clothingPrice = 200;
+
+            const total = (basePrice + urgencyMultiplier + retouchPrice + clothingPrice) * quantity;
+            
+            // Обновление итоговой стоимости
+            document.getElementById('summaryTotal').textContent = `${total}₽`;
+            
+            return total;
+        }
+
+        function updateOrderSummary() {
+            // Обновление деталей в итоговом блоке
+            const serviceNames = {
+                'passport': 'Паспорт РФ',
+                'foreign': 'Загранпаспорт',
+                'visa': 'Виза',
+                'student': 'Студенческий'
+            };
+            
+            document.getElementById('summaryService').textContent = serviceNames[selectedService] || 'Паспорт РФ';
+            document.getElementById('summaryUrgency').textContent = document.getElementById('urgency').options[document.getElementById('urgency').selectedIndex].text;
+            document.getElementById('summaryQuantity').textContent = `${document.getElementById('quantity').value} шт`;
+            document.getElementById('summaryRetouch').textContent = document.getElementById('retouch').options[document.getElementById('retouch').selectedIndex].text;
+            document.getElementById('summaryClothing').textContent = document.getElementById('clothing').options[document.getElementById('clothing').selectedIndex].text;
+            document.getElementById('summaryLocation').textContent = document.getElementById('location').options[document.getElementById('location').selectedIndex].text;
+            
+            calculatePrice();
+        }
+
+        // Обработка отправки формы
+        document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                service: selectedService,
+                urgency: document.getElementById('urgency').value,
+                quantity: document.getElementById('quantity').value,
+                retouch: document.getElementById('retouch').value,
+                clothing: document.getElementById('clothing').value,
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                location: document.getElementById('location').value,
+                comments: document.getElementById('comments').value,
+                total: document.getElementById('summaryTotal').textContent
+            };
+
+            console.log('Данные заказа:', formData);
+            
+            // Показываем экран успеха
+            document.getElementById('step4').classList.remove('active');
+            document.getElementById('step5').classList.add('active');
+            
+            // Можно добавить отправку данных на сервер
+            // fetch('/api/order', { method: 'POST', body: JSON.stringify(formData) })
+        });
+
+        // Инициализация
+        updateProgressBar();
+        calculatePrice();
+        updateOrderSummary();
+
+        // Слушатели изменений для пересчета цены
+        ['urgency', 'quantity', 'retouch', 'clothing', 'location'].forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                calculatePrice();
+                updateOrderSummary();
+            });
+        });
+    </script>
+</body>
+</html>
